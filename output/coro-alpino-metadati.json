@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "coordinateSystem": "pixel integers; origin top-left; source and destination absolute; anchor and contentBounds relative to source rectangle; shift relative to source rectangle origin",
+  "cellWidth": 534,
+  "cellHeight": 392,
+  "columns": 2,
+  "rows": 2,
+  "frameCount": 4,
+  "options": {
+    "mode": "match",
+    "axis": "both",
+    "reference": 0,
+    "threshold": 1,
+    "cols": 2
+  },
+  "frames": [
+    {
+      "index": 0,
+      "source": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 384
+      },
+      "contentBounds": {
+        "x": 46,
+        "y": 11,
+        "w": 462,
+        "h": 367
+      },
+      "anchor": {
+        "x": 276,
+        "y": 377
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 0,
+        "y": 0
+      },
+      "destination": {
+        "x": 0,
+        "y": 7
+      },
+      "empty": false,
+      "reference": 0
+    },
+    {
+      "index": 1,
+      "source": {
+        "x": 512,
+        "y": 0,
+        "w": 512,
+        "h": 384
+      },
+      "contentBounds": {
+        "x": 23,
+        "y": 12,
+        "w": 465,
+        "h": 358
+      },
+      "anchor": {
+        "x": 255,
+        "y": 369
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 22,
+        "y": 1
+      },
+      "destination": {
+        "x": 556,
+        "y": 8
+      },
+      "empty": false,
+      "reference": 0
+    },
+    {
+      "index": 2,
+      "source": {
+        "x": 0,
+        "y": 384,
+        "w": 512,
+        "h": 384
+      },
+      "contentBounds": {
+        "x": 45,
+        "y": 18,
+        "w": 465,
+        "h": 345
+      },
+      "anchor": {
+        "x": 277,
+        "y": 362
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 0,
+        "y": -7
+      },
+      "destination": {
+        "x": 0,
+        "y": 392
+      },
+      "empty": false,
+      "reference": 0
+    },
+    {
+      "index": 3,
+      "source": {
+        "x": 512,
+        "y": 384,
+        "w": 512,
+        "h": 384
+      },
+      "contentBounds": {
+        "x": 16,
+        "y": 6,
+        "w": 472,
+        "h": 378
+      },
+      "anchor": {
+        "x": 251,
+        "y": 383
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 21,
+        "y": -7
+      },
+      "destination": {
+        "x": 555,
+        "y": 392
+      },
+      "empty": false,
+      "reference": 0
+    }
+  ]
+}

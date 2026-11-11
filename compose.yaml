@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - ./input:/data/input
+      - ./output:/data/output
+    command: sh -c "npm ci && npm run dev"
+volumes:
+  node_modules:

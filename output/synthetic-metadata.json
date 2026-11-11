@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "coordinateSystem": "pixel integers; origin top-left; source and destination absolute; anchor and contentBounds relative to source rectangle; shift relative to source rectangle origin",
+  "cellWidth": 38,
+  "cellHeight": 39,
+  "columns": 3,
+  "rows": 1,
+  "frameCount": 3,
+  "options": {
+    "mode": "bottom",
+    "axis": "both",
+    "reference": 0,
+    "threshold": 1,
+    "cols": 3
+  },
+  "frames": [
+    {
+      "index": 0,
+      "source": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "contentBounds": {
+        "x": 7,
+        "y": 5,
+        "w": 14,
+        "h": 20
+      },
+      "anchor": {
+        "x": 13,
+        "y": 24
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 0,
+        "y": 0
+      },
+      "destination": {
+        "x": 4,
+        "y": 3
+      },
+      "empty": false,
+      "reference": 0
+    },
+    {
+      "index": 1,
+      "source": {
+        "x": 32,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "contentBounds": {
+        "x": 11,
+        "y": 1,
+        "w": 14,
+        "h": 20
+      },
+      "anchor": {
+        "x": 17,
+        "y": 20
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": -4,
+        "y": 4
+      },
+      "destination": {
+        "x": 38,
+        "y": 7
+      },
+      "empty": false,
+      "reference": 0
+    },
+    {
+      "index": 2,
+      "source": {
+        "x": 64,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "contentBounds": {
+        "x": 5,
+        "y": 8,
+        "w": 14,
+        "h": 20
+      },
+      "anchor": {
+        "x": 11,
+        "y": 27
+      },
+      "manualAnchor": null,
+      "group": "1",
+      "correction": {
+        "x": 0,
+        "y": 0
+      },
+      "shift": {
+        "x": 2,
+        "y": -3
+      },
+      "destination": {
+        "x": 82,
+        "y": 0
+      },
+      "empty": false,
+      "reference": 0
+    }
+  ]
+}

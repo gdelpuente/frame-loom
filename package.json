@@ -1,0 +1,19 @@
+{
+  "name": "frame-loom",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "test": "node --test",
+    "fixture": "node scripts/fixture.js",
+    "choir": "node scripts/choir.js"
+  },
+  "dependencies": {
+    "fflate": "0.8.3"
+  },
+  "devDependencies": {
+    "vite": "6.4.6"
+  }
+}
