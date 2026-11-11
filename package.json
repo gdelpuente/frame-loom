@@ -8,7 +8,8 @@
     "build": "vite build",
     "test": "node --test",
     "fixture": "node scripts/fixture.js",
-    "choir": "node scripts/choir.js"
+    "choir": "node scripts/choir.js",
+    "batch": "node scripts/batch.js"
   },
   "dependencies": {
     "fflate": "0.8.3"

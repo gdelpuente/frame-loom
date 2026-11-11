@@ -30,6 +30,18 @@ Alternativa con Node installato: `npm ci`, `npm test`, `npm run build`, `npm run
 5. **Adatta alle viste** mostra automaticamente immagini grandi per intero, con la stessa scala dentro ciascuna coppia; regolare lo zoom manuale (10–800%) per esaminare i dettagli. Sono soltanto scale di visualizzazione: sotto il 100% non tutti i pixel possono essere mostrati. Scacchiera, FPS, pausa e avanzamento non influenzano l'output. Selezionare o modificare un fotogramma mette in pausa. Il rettangolo sorgente è verde, il limite rilevato giallo, l'ancora rossa; l'offset complessivo è riportato sotto l'anteprima. **Ripristina allineamento** azzera ancore manuali, gruppi e correzioni, senza cambiare i rettangoli sorgente.
 6. Esportare PNG, ZIP dei singoli PNG, JSON dei metadati o JSON del progetto. Il progetto include il PNG originale in base64 e tutte le correzioni, e si riapre con **Apri progetto**. I download sono nuovi file, non modificano l'originale. Applicare una nuova griglia cancella le correzioni; i valori della griglia ancora non applicati non entrano nel progetto.
 
+## Elaborazione batch
+
+Per elaborare immagini con la stessa griglia e le stesse opzioni, usare **Apri batch** per selezionare più PNG oppure **Apri cartella** per caricare una cartella (anche con sottocartelle), quindi **Elabora batch selezionato**. Ogni immagine viene verificata e processata indipendentemente: un file non valido non impedisce di esportare gli altri. Lo ZIP scaricato contiene, per ogni immagine, lo sprite sheet allineato, i PNG dei singoli fotogrammi e i metadati, oltre a un report degli eventuali errori.
+
+La stessa operazione è disponibile da terminale, elaborando ricorsivamente i PNG e mantenendo i percorsi relativi:
+
+```powershell
+npm run batch -- .\input .\output --grid-rows 2 --grid-cols 2 --mode match --reference 1 --output-cols 2
+```
+
+Le opzioni di griglia sono `--grid-rows`, `--grid-cols`, `--margin-x`, `--margin-y`, `--gap-x` e `--gap-y`; quelle di allineamento sono `--mode` (`match`, `bottom`, `center`, `none`), `--axis` (`both`, `x`), `--reference` (numerazione da 1), `--threshold` e `--output-cols`. I valori predefiniti elaborano ogni PNG come un solo fotogramma; `--output-cols` predefinito segue le colonne della griglia sorgente. Per ogni file crea una cartella sotto l'output con sheet, metadati e directory `frames`. I file non validi sono segnalati e gli altri continuano; il comando termina con codice non zero se almeno un'immagine non è stata elaborata.
+
 ## Qualità e limiti
 
 Il decoder accetta soltanto PNG non interlacciati, colore RGBA a 8 bit, fino a 16.777.216 pixel; anche l'output è limitato a tale numero. PNG RGB, scala di grigi, indicizzati, 16 bit, interlacciati e chunk critici non gestiti vengono rifiutati esplicitamente. I PNG con profili o metadati colore `iCCP`, `sRGB`, `gAMA`, `cHRM`, `cICP`, `mDCV` o `cLLI` vengono rifiutati, senza convertirli o scartarli silenziosamente. Altri metadati non critici non sono conservati nel PNG esportato. Se necessario, preparare una copia compatibile con uno strumento esterno, consapevoli di eventuali conversioni.

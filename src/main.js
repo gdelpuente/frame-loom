@@ -4,7 +4,7 @@ import { makeGrid, align, extractCell } from './core.js';
 import './style.css';
 
 document.querySelector('#app').innerHTML = `
-<header><div><h1>Frame Loom</h1><p>Allineamento senza trasformare i pixel · tutto in locale</p></div><label class="upload">Apri PNG<input id="file" type="file" accept=".png,image/png"></label><label class="upload secondary">Apri progetto<input id="project" type="file" accept=".json,application/json"></label></header>
+<header><div><h1>Frame Loom</h1><p>Allineamento senza trasformare i pixel · tutto in locale</p></div><label class="upload">Apri PNG<input id="file" type="file" accept=".png,image/png"></label><label class="upload">Apri batch<input id="batchFiles" type="file" accept=".png,image/png" multiple></label><label class="upload">Apri cartella<input id="batchFolder" type="file" accept=".png,image/png" webkitdirectory multiple></label><label class="upload secondary">Apri progetto<input id="project" type="file" accept=".json,application/json"></label></header>
 <main>
 <section class="panel drop" id="drop"><strong>Trascina qui uno sprite sheet PNG</strong><span>RGBA 8 bit, non interlacciato e senza profili colore incorporati.</span><p id="status" role="status">Nessuna immagine caricata.</p></section>
 <div class="workspace">
@@ -23,7 +23,7 @@ document.querySelector('#app').innerHTML = `
 <label>X<input id="rx" type="number" min="0"></label><label>Y<input id="ry" type="number" min="0"></label><label>Larghezza<input id="rw" type="number" min="1"></label><label>Altezza<input id="rh" type="number" min="1"></label></div>
 <h3>Ancora relativa al rettangolo</h3><label class="check"><input id="manual" type="checkbox"> Usa ancora manuale</label><div class="fields"><label>X<input id="ax" type="number" min="0"></label><label>Y<input id="ay" type="number" min="0"></label><label>Offset X<input id="dx" type="number" step="1"></label><label>Offset Y<input id="dy" type="number" step="1"></label></div>
 <small>Coordinate intere. Rettangoli sovrapposti sono ammessi; non ricostruiscono contenuti mancanti.</small></section>
-<section class="panel"><h2>4. Esporta</h2><div class="buttons"><button id="sheet">Sprite sheet PNG</button><button id="frames">Fotogrammi ZIP</button><button id="json">Metadati JSON</button><button id="save">Progetto JSON</button></div><small>I download sono nuovi file: l'originale non viene sovrascritto.</small></section>
+<section class="panel"><h2>4. Esporta</h2><div class="buttons"><button id="sheet">Sprite sheet PNG</button><button id="frames">Fotogrammi ZIP</button><button id="json">Metadati JSON</button><button id="save">Progetto JSON</button><button id="batch" class="batch-button" disabled>Elabora batch selezionato</button></div><small>Il batch applica griglia e opzioni correnti a ogni PNG e scarica un unico ZIP con sheet, fotogrammi e metadati per immagine. I download non modificano gli originali.</small></section>
 </aside>
 <div class="content">
 <section class="panel"><div class="section-title"><h2>Confronto sheet</h2><div class="zoom-controls"><label class="check"><input id="fit" type="checkbox" checked> Adatta alle viste</label><label>Zoom manuale <input id="zoom" type="range" min="10" max="800" step="10" value="100"> <span id="zoomValue">100%</span></label></div></div><p>Ogni coppia usa la stessa scala. Zoom solo visivo, senza smoothing; verde: rettangolo, giallo: contenuto, rosso: ancora.</p><p id="fitScales"></p><div class="compare"><div><h3>Originale</h3><div class="viewport checker"><canvas id="source"></canvas></div></div><div><h3>Allineato</h3><div class="viewport checker"><canvas id="output"></canvas></div></div></div></section>
@@ -140,6 +140,51 @@ async function openFile(file, project = false) {
     }
   } catch (error) { status(`Importazione non riuscita: ${error.message}`, true); }
 }
+function batchFiles() {
+  return [...($('batchFiles').files ?? []), ...($('batchFolder').files ?? [])];
+}
+$('batchFiles').onchange = () => { $('batchFolder').value = ''; $('batch').disabled = batchFiles().length === 0; };
+$('batchFolder').onchange = () => { $('batchFiles').value = ''; $('batch').disabled = batchFiles().length === 0; };
+$('batch').onclick = async () => {
+  const files = batchFiles();
+  if (!files.length) return;
+  const entries = {}, usedPrefixes = new Set(), report = { processed: [], failed: [] };
+  const grid = gridValues(), opts = options();
+  $('batch').disabled = true;
+  status(`Batch in corso: ${files.length} immagini…`);
+  for (const file of files) {
+    try {
+      if (!file.name.toLowerCase().endsWith('.png')) throw Error('Estensione non supportata: seleziona PNG');
+      const source = decodePNG(new Uint8Array(await file.arrayBuffer()));
+      const result = align(source, makeGrid(source, grid), opts);
+      const parts = (file.webkitRelativePath || file.name).replaceAll('\\', '/').split('/').filter(part => part && part !== '.' && part !== '..');
+      const filename = parts.pop() || file.name;
+      const originalStem = filename.replace(/\.png$/i, '');
+      let stem = originalStem, suffix = 2, prefix = [...parts, stem].join('/');
+      while (usedPrefixes.has(prefix)) {
+        stem = `${originalStem}-${suffix++}`;
+        prefix = [...parts, stem].join('/');
+      }
+      const fileEntries = {
+        [`${prefix}/${stem}-aligned.png`]: encodePNG(result.image),
+        [`${prefix}/${stem}-metadata.json`]: jsonBytes(result.metadata)
+      };
+      result.metadata.frames.forEach((_, i) => {
+        fileEntries[`${prefix}/frames/frame-${String(i + 1).padStart(4, '0')}.png`] = encodePNG(extractCell(result, i));
+      });
+      Object.assign(entries, fileEntries);
+      usedPrefixes.add(prefix);
+      report.processed.push({ file: file.webkitRelativePath || file.name, frameCount: result.metadata.frameCount });
+    } catch (error) {
+      report.failed.push({ file: file.webkitRelativePath || file.name, error: error.message });
+    }
+  }
+  entries['batch-report.json'] = jsonBytes(report);
+  if (report.processed.length) download('frame-loom-batch.zip', zipSync(entries), 'application/zip');
+  const message = `Batch completato: ${report.processed.length}/${files.length} immagini esportate${report.failed.length ? ` · errori: ${report.failed.map(item => `${item.file}: ${item.error}`).join('; ')}` : ''}`;
+  status(message, report.failed.length > 0);
+  $('batch').disabled = batchFiles().length === 0;
+};
 $('file').onchange = e => openFile(e.target.files[0]);
 $('project').onchange = e => openFile(e.target.files[0], true);
 for (const name of ['dragenter', 'dragover']) $('drop').addEventListener(name, e => { e.preventDefault(); $('drop').classList.add('drag'); });
